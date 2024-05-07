@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+  <head>
+      <title>Gamelab Indonesia</title>
+      <style>
+        * {
+          margin: 3px;
+        }
+        h1 {
+          text-align: center;
+          margin-top: 30px;
+
+        }
+        .form-control, .form-select {
+          margin-top: 11px;
+        }
+        button {
+          padding: 8px;
+          border-radius: 5px;
+          color: white;
+          cursor: pointer;
+          width: 79px;
+        }
+        input {
+          width: 250px;
+          height: 30px;
+        }
+        .id {
+          margin-top: 30px;
+        }
+        table {
+          border: 1px solid;
+          margin-top: 20px;
+          width: 100%;
+        }
+        th {
+          border: 1px solid;
+          padding: 8px;
+          text-align: center;
+          background-color: cadetblue;
+        }
+        td {
+          border: 1px solid;
+          padding: 8px;
+          text-align: center;
+        }
+      </style>
+    </head>
+  <body>
+    <h1>RS. Game Lab Indonesia</h1>
+
+    <div class="form-control">
+      <label class="id">Id Pasien:</label>
+      <input type="number" id="id" placeholder="Id Pasien" required>
+      <button style="background-color: darkorange;" type="button" id="search" onclick="searchData()"> Search</button>
+    </div>
+    <div class="form-control">
+      <div> Nama </div>
+      <input id="nama" placeholder="Nama Pasien" required>
+    </div>
+    <div class="form-control">
+      <div> Alamat </div>
+      <input id="alamat" placeholder="Alamat Pasien" required>
+    </div>
+    <div class="form-control">
+      <div> Penyakit</div>
+      <input id="penyakit" placeholder="Penyakit Pasien" required>
+    </div>
+    <div class="form-control">
+      <div> Nomor Ruang</div>
+      <input id="ruang" placeholder="Nomor Ruang" required>
+    </div>
+    <div class="form-select">
+      <div>BPJS</div>
+      <select id="bpjs" value="BPJS" style="width: 255px; height: 30px;">
+        <option>Tidak Menggunakan</option>
+        <option>Kelas I</option>
+        <option>Kelas II</option>
+        <option>Kelas III</option>
+      </select>
+    </div>
+    <div class="form-control">
+      <div> Tanggal Masuk</div>
+        <input type="date"  id="tgl_masuk" required>
+    </div>
+    <div class="form-control">
+      <div> Tanggal Keluar</div>
+        <input type="date" id="tgl_keluar" required>
+    </div>
+    <div>
+      <button style="background-color: green;" type="button" onclick="addPatient()">Save</button>
+      <button style="background-color: lightskyblue;" type="submit" name="show" onclick="showPatients()" value="show">Show</button>
+      <button style="background-color: red;" onclick="deleteData()" value="delete">Delete</button>
+    </div>
+    <div id="output"></div>
+
+    <script>
+        function showAddPatientForm() {
+            document.getElementById("addPatientForm").style.display = "block";
+        }
+
+        function addPatient() {
+            var patient = {
+                "Nomor ID": document.getElementById("id").value,
+                "Nama Pasien": document.getElementById("nama").value,
+                "Alamat": document.getElementById("alamat").value,
+                "Penyakit": document.getElementById("penyakit").value,
+                "Nomor Ruang": document.getElementById("ruang").value,
+                "BPJS": document.getElementById("bpjs").value,
+                "Tanggal Masuk": document.getElementById("tgl_masuk").value,
+                "Tanggal Keluar": document.getElementById("tgl_keluar").value
+            };
+
+            var patients = getlocalData("patients") || [];
+            patients.push(patient);
+            setlocalData("patients", patients);
+
+            alert("Pasien berhasil ditambahkan!");
+        }
+
+        function getlocalData(key) {
+            var data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function setlocalData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function showPatients() {
+            var patients = getlocalData("patients");
+            var outputDiv = document.getElementById("output");
+            outputDiv.innerHTML = "";
+
+            if (patients && patients.length > 0) {
+                var table = document.createElement("table");
+                var headerRow = table.insertRow(0);
+
+                for (var key in patients[0]) {
+                    var th = document.createElement("th");
+                    th.textContent = key;
+                    headerRow.appendChild(th);
+                }
+
+                for (var i = 0; i < patients.length; i++) {
+                    var row = table.insertRow(i + 1);
+
+                    for (var key in patients[i]) {
+                        var cell = row.insertCell(-1);
+                        cell.textContent = patients[i][key];
+                    }
+                }
+
+                outputDiv.appendChild(table);
+            } else {
+                outputDiv.textContent = "Tidak ada data pasien.";
+            }
+        }
+        // function deleteData() {
+        //     var id = document.getElementById("id").value;
+        //     var patients = getlocalData("patients") || [];
+
+        //     for (var i = 0; i < patients.length; i++) {
+        //         if (patients[i]["ID Pasien"] === id) {
+        //             patients.splice(i, 1);
+        //             setlocalData("patients", patients);
+        //             alert("Data pasien berhasil dihapus!");
+        //             showData();
+        //             return;
+        //         }
+        //     }
+        // alert("Data pasien tidak ditemukan.");
+        //}
+
+        function deleteData() {
+        var confirmDelete = confirm("Apakah Anda yakin ingin menghapus semua data pasien?");
+        if (confirmDelete) {
+          localStorage.removeItem("patients");
+          alert("Semua data pasien berhasil dihapus!");
+          showPatients();
+        }
+        }
+        
+      function searchData() {
+        var id = document.getElementById("id").value;
+        var patients = getlocalData("patients") || [];
+
+        var foundPatients = patients.filter(function(patient) {
+          return patient["ID Pasien"] === id;
+        });
+
+        if (foundPatients.length > 0) {
+          document.getElementById("nama").value = foundPatients[0]["Nama"];
+          document.getElementById("alamat").value = foundPatients[0]["Alamat"];
+          document.getElementById("penyakit").value = foundPatients[0]["Penyakit"];
+          document.getElementById("ruang").value = foundPatients[0]["Nomor Ruang"];
+          document.getElementById("bpjs").value = foundPatients[0]["BPJS"];
+          document.getElementById("tgl_masuk").value = foundPatients[0]["Tanggal Masuk"];
+          document.getElementById("tgl_keluar").value = foundPatients[0]["Tanggal Keluar"];
+        } else {
+          alert("Data pasien tidak ditemukan.");
+        }
+      }
+    </script>
+</body>
+</html>

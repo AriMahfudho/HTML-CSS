@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>To-Do List</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100vh;
+				background-color: #f4f4f4;
+			}
+
+			.container {
+				text-align: center;
+				border: 1px solid black;
+				background-color: wheat;
+				border-radius: 8px;
+				padding: 28px;
+				margin: 18px;
+				width: 300px;
+			}
+
+			input {
+				padding: 8px;
+                border-radius: 5px;
+			}
+
+			button {
+				padding: 8px;
+                border-radius: 5px;
+				cursor: pointer;
+                background-color: lightblue;
+			}
+
+			ul {
+				list-style: none;
+				padding: 0;
+			}
+
+			li {
+				margin: 8px;
+				padding: 8px;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.delete {
+				cursor: pointer;
+				color: red;
+                border: 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>My To-Do List</h1>
+			<input type="text" id="taskInput" placeholder="Add new task" />
+			<button onclick="addTask()">Add Task</button>
+			<ul id="taskList"></ul>
+		</div>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				loadTasks();
+			});
+
+			function addTask() {
+				const taskInput = document.getElementById("taskInput");
+				const taskList = document.getElementById("taskList");
+
+				if (taskInput.value !== "") {
+					const taskText = taskInput.value;
+
+					const li = document.createElement("li");
+					li.innerHTML = `
+            ${taskText}
+            <span class="delete" onclick="deleteTask(this)">X</span>
+        `;
+					taskList.appendChild(li);
+					saveTasks();
+					taskInput.value = "";
+				}
+			}
+
+			function deleteTask(spanElement) {
+				const taskList = document.getElementById("taskList");
+				const li = spanElement.parentElement;
+				taskList.removeChild(li);
+				saveTasks();
+			}
+
+			function saveTasks() {
+				const taskList = document.getElementById("taskList");
+				const tasks = taskList.innerHTML;
+				sessionStorage.setItem("tasks", tasks);
+			}
+
+			function loadTasks() {
+				const taskList = document.getElementById("taskList");
+				const tasks = sessionStorage.getItem("tasks");
+
+				if (tasks) {
+					taskList.innerHTML = tasks;
+				}
+			}
+		</script>
+	</body>
+</html>

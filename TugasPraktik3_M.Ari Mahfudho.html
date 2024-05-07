@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir</title>
+</head>
+<body>
+    <center>
+    <h1><ins>FORMULIR PENDAFTARAN</ins></h1>
+    <video width="350" height="240" controls>
+        <source src="https://file-examples.com/wp-content/storage/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
+    </video><br>
+    <canvas id="canvasku" width="400" height="200" style="border: 3px solid #000000;">
+    </canvas>
+    <script>
+        var cv = document.getElementById("canvasku");
+        var cvtext = cv.getContext("2d");
+        
+        var grd = cvtext.createLinearGradient(0,0,250,0);
+        grd.addColorStop(0,"orange");
+        grd.addColorStop(1,"yellow");
+        
+        cvtext.fillStyle =  grd;
+        cvtext.fillRect(0,0,1280,280);
+        cvtext.font = "30px Text New Roman";
+        cvtext.strokeText("Educa Studio",100,100);
+        </script>
+        
+        <form action="" method="post">
+            <label>Nama Lengkap : </label>
+            <input type="text" id="nama"><br>
+
+            <label>Tempat Lahir : </label>
+            <input type="text" id="tempat"><br>
+
+            <label>Tanggal Lahir : </label>
+            <input type="date" id="tgl"><br>
+
+            <label for="kelamin">Jenis Kelamin : </label>
+            <input type="radio" id="laki" value="Laki-laki">
+            <label for="laki">Laki-laki : </label>
+            <input type="radio" id="perempuan" value="perempuan">
+            <label for="perempuan">Perempuan : </label><br>
+
+            <label>Alamat : </label>
+            <textarea name="textarea" id="alamat"></textarea>
+            <br>
+
+            <label>Email : </label>
+            <input type="text" id="email"><br>
+
+            <label>No.Hp : </label>
+            <input type="text" id="no_hp"><br>
+
+            <label>Kota : </label>
+            <select name="select">
+                <option value="">**** Pilih Kota ****</option>   
+                <option value="">Demak</option>
+                <option value="">Semarang</option>
+                <option value="">Salatiga</option>       
+            </select>
+            <br>
+
+            <input type="submit" name="simpan" value="Simpan">
+            <input type="button" name="batal" value="Batal">
+        </center>
+        </form>
+    
+    
+</body>
+</html>

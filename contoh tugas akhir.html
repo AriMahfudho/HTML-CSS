@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Pasien Rumah Sakit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        form label, form input, form select {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Manajemen Pasien Rumah Sakit</h1>
+
+<!-- Form untuk mencari pasien -->
+<form id="searchForm">
+    <label for="searchId">Cari Pasien (ID):</label>
+    <input type="number" id="searchId" required>
+    <button type="button" onclick="searchPatient()">Search</button>
+</form>
+
+<!-- Form untuk menambah pasien -->
+
+<form id="patientForm">
+    <div>
+    <label for="no_id">Id Pasien:</label>
+    <input type="number" id="no_id" required>
+        </div>
+        <div>
+            
+            <label for="nama">Nama Pasien:</label>
+            <input type="text" id="nama" required>
+        </div>
+
+    <label for="alamat">Alamat:</label>
+    <input type="text" id="alamat" required>
+
+    <label for="penyakit">Penyakit:</label>
+    <input type="text" id="penyakit" required>
+
+    <label for="ruang">Nomor Ruang:</label>
+    <input type="text" id="ruang" required>
+
+    <label for="bpjs">BPJS:</label>
+    <select id="bpjs" required>
+        <option value="Tidak menggunakan">Tidak menggunakan</option>
+        <option value="Kelas I">Kelas I</option>
+        <option value="Kelas II">Kelas II</option>
+        <option value="Kelas III">Kelas III</option>
+    </select>
+
+    <label for="tanggalMasuk">Tanggal Masuk:</label>
+    <input type="date" id="tanggalMasuk" required>
+
+    <button type="submit">Tambah Pasien</button>
+</form>
+
+<!-- Tabel untuk menampilkan daftar pasien -->
+<table id="patientTable">
+    <tr>
+        <th>ID</th>
+        <th>Nama Pasien</th>
+        <th>Alamat</th>
+        <th>Penyakit</th>
+        <th>Nomor Ruang</th>
+        <th>BPJS</th>
+        <th>Tanggal Masuk</th>
+        <th>Tanggal Keluar</th>
+        <th>Aksi</th>
+    </tr>
+</table>
+
+<!-- Tombol untuk menampilkan dan menghapus data sesuai ID -->
+<button onclick="showPatients()">Tampilkan Daftar Pasien</button>
+<button onclick="deleteAllPatients()">Hapus Semua Pasien</button>
+
+<script>
+    const patientForm = document.getElementById('patientForm');
+    const searchForm = document.getElementById('searchForm');
+    const patientTable = document.getElementById('patientTable');
+
+    // Fungsi untuk menampilkan daftar pasien dari localStorage
+    function showPatients() {
+        const patients = getPatientsFromStorage();
+        displayPatients(patients);
+    }
+
+    // Fungsi untuk menambah pasien baru ke localStorage
+    function addPatient(patient) {
+        const patients = getPatientsFromStorage();
+        patients.push(patient);
+        localStorage.setItem('patients', JSON.stringify(patients));
+        displayPatients(patients);
+        resetForm();
+    }
+
+    // Fungsi untuk mencari pasien berdasarkan ID
+    function searchPatient() {
+        const searchId = parseInt(document.getElementById('searchId').value);
+        const patients = getPatientsFromStorage();
+        const foundPatient = patients.find(patient => patient.id === searchId);
+
+        if (foundPatient) {
+            displayPatients([foundPatient]);
+        } else {
+            alert('Pasien dengan ID tersebut tidak ditemukan.');
+        }
+    }
+
+    // Fungsi untuk menampilkan dan menghapus semua pasien
+    function deleteAllPatients() {
+        const confirmDelete = confirm("Apakah Anda yakin ingin menghapus semua pasien?");
+        if (confirmDelete) {
+            localStorage.removeItem('patients');
+            displayPatients([]);
+        }
+    }
+
+    // Fungsi untuk menampilkan data pasien dalam tabel
+    function displayPatients(patients) {
+        // Hapus semua baris kecuali header
+        while (patientTable.rows.length > 1) {
+            patientTable.deleteRow(1);
+        }
+
+        // Tambahkan baris untuk setiap pasien
+        patients.forEach((patient, index) => {
+            const row = patientTable.insertRow(index + 1);
+            row.innerHTML = `
+                <td>${patient.id}</td>
+                <td>${patient.nama}</td>
+                <td>${patient.alamat}</td>
+                <td>${patient.penyakit}</td>
+                <td>${patient.ruang}</td>
+                <td>${patient.bpjs}</td>
+                <td>${patient.tanggalMasuk}</td>
+                <td>${patient.tanggalKeluar}</td>
+                <td><button onclick="editPatient(${patient.id})">Edit</button> <button onclick="deletePatient(${patient.id})">Hapus</button></td>
+            `;
+        });
+    }
+
+    // Fungsi untuk mengedit data pasien berdasarkan ID
+    function editPatient(id) {
+        const patients = getPatientsFromStorage();
+        const foundIndex = patients.findIndex(patient => patient.id === id);
+
+        if (foundIndex !== -1) {
+            const updatedPatient = prompt("Edit data pasien:", JSON.stringify(patients[foundIndex]));
+            if (updatedPatient) {
+                patients[foundIndex] = JSON.parse(updatedPatient);
+                localStorage.setItem('patients', JSON.stringify(patients));
+                displayPatients(patients);
+            }
+        } else {
+            alert('Pasien dengan ID tersebut tidak ditemukan.');
+        }
+    }
+
+    // Fungsi untuk menghapus pasien berdasarkan ID
+    function deletePatient(id) {
+        const patients = getPatientsFromStorage();
+        const confirmDelete = confirm("Apakah Anda yakin ingin menghapus pasien?");
+        if (confirmDelete) {
+            const updatedPatients = patients.filter(patient => patient.id !== id);
+            localStorage.setItem('patients', JSON.stringify(updatedPatients));
+            displayPatients(updatedPatients);
+        }
+    }
+
+    // Fungsi untuk mendapatkan data pasien dari localStorage
+    function getPatientsFromStorage() {
+        const patientsString = localStorage.getItem('patients');
+        return JSON.parse(patientsString) || [];
+    }
+
+    // Fungsi untuk mereset form setelah submit
+    function resetForm() {
+        patientForm.reset();
+    }
+
+    // Event listener untuk form submit
+    patientForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const newPatient = {
+            id: document.getElementById('no_id').value,
+            nama: document.getElementById('nama').value,
+            alamat: document.getElementById('alamat').value,
+            penyakit: document.getElementById('penyakit').value,
+            ruang: document.getElementById('ruang').value,
+            bpjs: document.getElementById('bpjs').value,
+            tanggalMasuk: document.getElementById('tanggalMasuk').value,
+            tanggalKeluar: '',
+        };
+
+        addPatient(newPatient);
+    });
+
+</script>
+
+</body>
+</html>

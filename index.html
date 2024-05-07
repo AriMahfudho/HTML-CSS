@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+  <head>
+      <title>Gamelab Indonesia</title>
+      <style>
+        * {
+          margin: 3px;
+        }
+        h1 {
+          text-align: center;
+          margin-top: 30px;
+
+        }
+        .form-control, .form-select {
+          margin-top: 15px;
+        }
+        button {
+          padding: 8px;
+          border-radius: 5px;
+          color: white;
+          cursor: pointer;
+          width: 79px;
+        }
+        input {
+          width: 250px;
+          height: 30px;
+        }
+        .id {
+          margin-top: 40px;
+        }
+        table {
+          border: 1px solid;
+          margin-top: 20px;
+          width: 100%;
+        }
+        th, td {
+          border: 1px solid;
+          padding: 8px;
+          text-align: center;
+        }
+      </style>
+    </head>
+  <body>
+    <h1>RS. Game Lab Indonesia</h1>
+    
+    <div class="form-control">
+      <div class="id"> ID pasien </div>
+        <input name="id" id="id" placeholder="Id Pasien" required>
+        <button style="background-color: darkorange;" type="button" id="search"> Search</button>
+    </div>
+    <div class="form-control">
+      <div> Nama </div>
+        <input id="nama" name="nama" placeholder="Nama Pasien" required>
+    </div>
+    <div class="form-control">
+      <div> Alamat </div>
+        <input id="alamat" placeholder="Alamat Pasien" required>
+    </div>
+    <div class="form-control">
+      <div> Penyakit</div>
+        <input id="penyakit" placeholder="Penyakit Pasien" required>
+    </div>
+    <div class="form-control">
+      <div> Nomor Ruang</div>
+        <input id="ruang" placeholder="Nomor Ruang" required>
+    </div>
+    <div class="form-select">
+      <div>BPJS</div>
+      <select id="bpjs" value="BPJS" style="width: 255px; height: 30px;">
+        <option>Tidak Menggunakan</option>
+        <option>Kelas I</option>
+        <option>Kelas II</option>
+        <option>Kelas III</option>
+      </select>
+    </div>
+    <div class="form-control">
+      <div> Tanggal Masuk</div>
+        <input type="date"  id="tgl_masuk" required>
+    </div>
+    <div class="form-control">
+      <div> Tanggal Keluar</div>
+        <input type="date" id="tgl_keluar" required>
+    </div>
+    <div>
+      <button style="background-color: green;" type="submit" name="save" onclick="tambahPasien()" value="save">Save</button>
+      <button style="background-color: plum;" type="submit" name="show" value="show">Show</button>
+      <button style="background-color: red;" onclick="alert('Anda yakin mau menghapus data?')" value="delete">Delete</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID Pasien</th>
+          <th>Nama</th>
+          <th>Alamat</th>
+          <th>Penyakit</th>
+          <th>Nomor Ruang</th>
+          <th>BPJS</th>
+          <th>Tanggal Masuk</th>
+          <th>Tanggal</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <script>
+
+function showAddPatientForm() {
+            var form = document.getElementById("addPatientForm");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+              function tambahPasien() {
+            var patient = {
+                "Nomor ID": document.getElementById("id").value,
+                "Nama Pasien": document.getElementById("nama").value,
+                "Alamat": document.getElementById("alamat").value,
+                "Penyakit": document.getElementById("penyakit").value,
+                "Nomor Ruang": document.getElementById("ruang").value,
+                "BPJS": document.getElementById("bpjs").value,
+                "Tanggal Masuk": document.getElementById("tgl_masuk").value,
+                "Tanggal Keluar": ""
+            };
+
+            var patients = getSessionData("patients") || [];
+            patients.push(patient);
+            setSessionData("patients", patients);
+
+            alert("Pasien berhasil ditambahkan!");
+
+            // Bersihkan formulir setelah menambahkan pasien
+            document.getElementById("addPatientForm").reset();
+            // Sembunyikan formulir setelah menambahkan pasien
+            showAddPatientForm();
+        }
+     
+  </script>
+</body>
+</html>
